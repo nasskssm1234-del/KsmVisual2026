@@ -4,10 +4,11 @@
   "description": "An Advanced Music Bot.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "keywords": [],
-  "author": "KsmStudio",
+  "author": "KSM",
   "license": "ISC",
   "dependencies": {
     "discord.js": "^14.22.1",

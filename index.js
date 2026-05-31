@@ -38,9 +38,6 @@ function startExpressServer() {
   }
 }
 
-// Start Express server before bot
-startExpressServer();
-
 const intents = [
   GatewayIntentBits.Guilds,
   GatewayIntentBits.GuildVoiceStates,
@@ -63,6 +60,9 @@ const riffy = new Riffy(client, config.lavalink.nodes, {
   defaultSearchPlatform: "ytmsearch",
   restVersion: "v4"
 });
+
+// Start Express server after client/riffy are initialized
+startExpressServer();
 
 // Fix Riffy Node initialization error by overriding the broken defineProperty call
 // This is a workaround for the riffy package bug mentioned in the error
@@ -372,7 +372,7 @@ function createStatsContainer() {
 function createHelpContainer() {
   const lavalinkStatus = isLavalinkConnected ? '🟢 Connected' : '🔴 Not Connected';
 
-  const description = `A powerful music bot with high quality audio\n\n**Total Commands:** 17\n**Prefix:** \`${config.prefix}\`\n**Lavalink:** ${lavalinkStatus}\nMade by **KsmStudio**\n\n**${config.emojis.music} Music Commands**\n**play** (p) - Play a song\n**pause** (pa) - Pause current song\n**resume** (r, res) - Resume playback\n**skip** (s, next) - Skip current song\n**stop** (st, leave) - Stop player\n**nowplaying** (np) - Show current song\n**queue** (q) - Show queue\n**loop** (l, repeat) - Loop mode\n**shuffle** (sh, mix) - Shuffle queue\n**volume** (v, vol) - Set volume\n**clearqueue** (cq, clear) - Clear queue\n**remove** (rm, delete) - Remove from queue\n**move** (mv) - Move in queue\n**247** (24/7, stay) - Toggle 24/7\n\n**${config.emojis.info} Utility Commands**\n**stats** (status, info) - Bot stats\n**ping** (latency) - Bot ping\n**invite** (inv) - Invite link\n**support** (server) - Support server\n**help** (h, cmd) - This message`;
+  const description = `A powerful music bot with high quality audio\n\n**Total Commands:** 17\n**Prefix:** \`${config.prefix}\`\n**Lavalink:** ${lavalinkStatus}\nMade by **KSMSTUDIO**\n\n**${config.emojis.music} Music Commands**\n**play** (p) - Play a song\n**pause** (pa) - Pause current song\n**resume** (r, res) - Resume playback\n**skip** (s, next) - Skip current song\n**stop** (st, leave) - Stop player\n**nowplaying** (np) - Show current song\n**queue** (q) - Show queue\n**loop** (l, repeat) - Loop mode\n**shuffle** (sh, mix) - Shuffle queue\n**volume** (v, vol) - Set volume\n**clearqueue** (cq, clear) - Clear queue\n**remove** (rm, delete) - Remove from queue\n**move** (mv) - Move in queue\n**247** (24/7, stay) - Toggle 24/7\n\n**${config.emojis.info} Utility Commands**\n**stats** (status, info) - Bot stats\n**ping** (latency) - Bot ping\n**invite** (inv) - Invite link\n**support** (server) - Support server\n**help** (h, cmd) - This message`;
 
   return new ContainerBuilder()
     .addSectionComponents(
@@ -562,6 +562,8 @@ client.on('interactionCreate', async (interaction) => {
           textChannel: channel.id,
           deaf: true
         });
+
+        player.setVolume(35);
       }
 
       const resolve = await riffy.resolve({ query, requester: member.user.id });
@@ -823,12 +825,14 @@ client.on('interactionCreate', async (interaction) => {
             queue247.add(guild.id);
 
             if (!player) {
-              riffy.createConnection({
+              const player247 = riffy.createConnection({
                 guildId: guild.id,
                 voiceChannel: member.voice.channel.id,
                 textChannel: channel.id,
                 deaf: true
               });
+
+              player247.setVolume(35);
             }
 
             const container = createSimpleContainer('24/7 Enabled', '24/7 mode enabled', config.emojis.success);
@@ -951,6 +955,8 @@ client.on('interactionCreate', async (interaction) => {
                   textChannel: message.channel.id,
                   deaf: true
                 });
+
+                player.setVolume(35);
               }
 
               const resolve = await riffy.resolve({ query, requester: message.author.id });
